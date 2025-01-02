@@ -49,3 +49,12 @@ D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\System.Text.Encodings.W
 D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\System.Text.Json.dll
 D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\System.Threading.Channels.dll
 D:\Uniwersytet\ASP.NET\Projekt\Checkers\obj\Debug\net6.0\Checkers.csproj.CopyComplete
+D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\wwwroot\asset-manifest.json
+D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\wwwroot\manifest.json
+D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\frontend\build\manifest.json
+D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\frontend\package-lock.json
+D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\frontend\package.json
+D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\frontend\public\manifest.json
+D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\frontend\build\asset-manifest.json
+D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\package-lock.json
+D:\Uniwersytet\ASP.NET\Projekt\Checkers\bin\Debug\net6.0\package.json

@@ -2,11 +2,14 @@
 
 namespace Checkers.Controllers
 {
-    public class GameController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class GameController : ControllerBase
     {
-        public IActionResult Index()
+        [HttpGet("status")]
+        public IActionResult GetGameStatus()
         {
-            return View();
+            return Ok(new { status = "Gra rozpoczęta", board = new string[8, 8] });
         }
     }
 }
