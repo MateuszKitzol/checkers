@@ -2,28 +2,24 @@
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
-// Styled Components
 const HomeWrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    text-align: center;
-    padding: 2rem;
+    min-height: 100vh;
+    background-color: #121212;
+    color: #e4e4e4;
 `;
 
 const StartButton = styled(Link)`
-    display: inline-block;
-    padding: 0.75rem 1.5rem;
-    font-size: 1.25rem;
-    color: white;
+    padding: 10px 20px;
     background-color: #1f78d1;
-    border: none;
-    border-radius: 4px;
+    color: white;
     text-decoration: none;
-    transition: background-color 0.3s;
-    cursor: pointer;
+    border-radius: 5px;
+    font-size: 18px;
+    margin-top: 20px;
 
     &:hover {
         background-color: #155a99;
@@ -33,9 +29,8 @@ const StartButton = styled(Link)`
 const Home = () => {
     return (
         <HomeWrapper>
-            <h1>Welcome to the Checkers Game</h1>
-            <p>Click below to start a game!</p>
-            <StartButton to="/game">Start Game</StartButton>
+            <h1>Welcome to Checkers Game</h1>
+            <StartButton to="/rooms">View Rooms</StartButton>
         </HomeWrapper>
     );
 };
