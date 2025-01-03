@@ -12,34 +12,14 @@ const StyledBoard = styled.div`
     background-color: #1e1e1e;
 `;
 
-const initializeBoard = () => {
-    const board = Array(8)
-        .fill(null)
-        .map(() => Array(8).fill(null));
-
-    // Add Player 1's checkers
-    for (let row = 0; row < 3; row++) {
-        for (let col = 0; col < 8; col++) {
-            if ((row + col) % 2 === 1) {
-                board[row][col] = { player: "P1", isKing: false }; // Player 1 pieces
-            }
-        }
-    }
-
-    // Add Player 2's checkers
-    for (let row = 5; row < 8; row++) {
-        for (let col = 0; col < 8; col++) {
-            if ((row + col) % 2 === 1) {
-                board[row][col] = { player: "P2", isKing: false }; // Player 2 pieces
-            }
-        }
-    }
-
-    return board;
-};
-
-const Board = ({ onMove }) => {
-    const board = initializeBoard();
+const Board = ({ board, onMove, selectedChecker }) => {
+    const getIsSelected = (row, col) => {
+        return (
+            selectedChecker &&
+            selectedChecker.row === row &&
+            selectedChecker.col === col
+        );
+    };
 
     return (
         <StyledBoard>
@@ -49,6 +29,7 @@ const Board = ({ onMove }) => {
                         key={`${rowIndex}-${colIndex}`}
                         value={square} // Checker object or null
                         isDark={(rowIndex + colIndex) % 2 === 1} // Dark square for alternate coloring
+                        isSelected={getIsSelected(rowIndex, colIndex)} // Highlight selected square
                         onClick={() => onMove(rowIndex, colIndex)}
                     />
                 ))
