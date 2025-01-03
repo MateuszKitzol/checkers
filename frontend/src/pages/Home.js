@@ -20,19 +20,23 @@ const StartButton = styled(Link)`
     border-radius: 5px;
     font-size: 18px;
     margin-top: 20px;
+    transition: background-color 0.3s;
 
     &:hover {
         background-color: #155a99;
+        color: white; /* Utrzymanie koloru tekstu */
     }
 `;
+
 
 const Home = () => {
     return (
         <HomeWrapper>
             <h1>Welcome to Checkers Game</h1>
-            <StartButton to="/nickname">View Rooms</StartButton>
+            <StartButton to="/nickname">Start The Game!</StartButton>
         </HomeWrapper>
     );
 };
+
 
 export default Home;
