@@ -1,5 +1,6 @@
-﻿import React, { useState } from "react";
+﻿import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import Board from "../components/Board";
 
 // Styled Components
@@ -11,6 +12,7 @@ const GameWrapper = styled.div`
     min-height: 100vh;
     padding: 2rem;
     background-color: #1e1e1e;
+    color: #e4e4e4;
 `;
 
 const BoardWrapper = styled.div`
@@ -21,6 +23,24 @@ const BoardWrapper = styled.div`
     background-color: #2c2c2c;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+`;
+
+const NicknameDisplay = styled.div`
+    margin-top: 20px;
+    padding: 10px;
+    background-color: ${(props) => (props.isOpponent ? "#d9534f" : "#1f78d1")};
+    color: white;
+    border-radius: 5px;
+    font-size: 18px;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+`;
+
+const OpponentWrapper = styled.div`
+    width: 100%;
+    max-width: 400px;
+    margin-bottom: 20px;
 `;
 
 // Initialize the board with checkers
@@ -53,6 +73,17 @@ const initializeBoard = () => {
 const Game = () => {
     const [board, setBoard] = useState(initializeBoard());
     const [selectedChecker, setSelectedChecker] = useState(null);
+    const [nickname, setNickname] = useState("");
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const savedNickname = localStorage.getItem("nickname");
+        if (savedNickname) {
+            setNickname(savedNickname);
+        } else {
+            navigate("/nickname"); // Przekierowanie, jeśli brak nicku
+        }
+    }, [navigate]);
 
     const handleSquareClick = (row, col) => {
         const checker = board[row][col];
@@ -84,16 +115,13 @@ const Game = () => {
                     // Perform the capture
                     captureChecker(row, col, middleRow, middleCol);
                 } else {
-                    // Invalid move
-                    setSelectedChecker(null);
+                    setSelectedChecker(null); // Invalid move
                 }
             } else {
-                // Invalid move
-                setSelectedChecker(null);
+                setSelectedChecker(null); // Invalid move
             }
         } else if (checker) {
-            // Select a checker
-            setSelectedChecker({ ...checker, row, col });
+            setSelectedChecker({ ...checker, row, col }); // Select a checker
         }
     };
 
@@ -189,6 +217,9 @@ const Game = () => {
 
     return (
         <GameWrapper>
+            <OpponentWrapper>
+                <NicknameDisplay isOpponent={true}>Opponent: TBD</NicknameDisplay>
+            </OpponentWrapper>
             <BoardWrapper>
                 <Board
                     board={board}
@@ -196,6 +227,7 @@ const Game = () => {
                     selectedChecker={selectedChecker}
                 />
             </BoardWrapper>
+            <NicknameDisplay>{nickname}</NicknameDisplay>
         </GameWrapper>
     );
 };

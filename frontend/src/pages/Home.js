@@ -30,7 +30,7 @@ const Home = () => {
     return (
         <HomeWrapper>
             <h1>Welcome to Checkers Game</h1>
-            <StartButton to="/rooms">View Rooms</StartButton>
+            <StartButton to="/nickname">View Rooms</StartButton>
         </HomeWrapper>
     );
 };
