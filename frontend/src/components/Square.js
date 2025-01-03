@@ -10,11 +10,13 @@ const StyledSquare = styled.div`
     display: flex;
     justify-content: center;
     align-items: center;
+    border: ${(props) => (props.isSelected ? "2px solid yellow" : "none")}; /* Highlight selected */
+    cursor: pointer;
 `;
 
-const Square = ({ value, isDark, onClick }) => {
+const Square = ({ value, isDark, isSelected, onClick }) => {
     return (
-        <StyledSquare isDark={isDark} onClick={onClick}>
+        <StyledSquare isDark={isDark} isSelected={isSelected} onClick={onClick}>
             {value ? <Checker player={value.player} isKing={value.isKing} /> : ""}
         </StyledSquare>
     );
