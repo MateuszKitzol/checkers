@@ -1,6 +1,6 @@
 ﻿import React, { useState } from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const RoomsWrapper = styled.div`
     display: flex;
@@ -20,7 +20,7 @@ const Title = styled.h1`
 const RoomList = styled.ul`
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 0 0 30px 0; /* Dodano większy dolny margines */
     width: 100%;
     max-width: 400px;
 `;
@@ -32,8 +32,8 @@ const RoomItem = styled.li`
         props.status === "free"
             ? "#1f78d1"
             : props.status === "waiting"
-            ? "#f1c40f"
-            : "#d9534f"};
+                ? "#f1c40f"
+                : "#d9534f"};
     color: white;
     border-radius: 5px;
     text-align: center;
@@ -42,32 +42,20 @@ const RoomItem = styled.li`
 
     &:hover {
         background-color: ${(props) =>
-            props.status === "occupied"
-                ? "#d9534f" /* Utrzymanie koloru tła dla zajętych pokoi */
-                : props.status === "free"
+        props.status === "occupied"
+            ? "#d9534f"
+            : props.status === "free"
                 ? "#155a99"
                 : "#d4ac0d"};
         color: white;
     }
-
-    a {
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
-        pointer-events: ${(props) => (props.status === "occupied" ? "none" : "auto")};
-
-        &:hover {
-            color: white;
-        }
-    }
 `;
 
-
-
-
-const NewRoomButton = styled.button`
-    margin-top: 20px;
+const ButtonBase = styled.button`
+    margin-top: 10px; /* Zmniejszona odległość */
     padding: 10px 20px;
+    width: 200px;
+    text-align: center;
     background-color: #1f78d1;
     color: white;
     border: none;
@@ -78,7 +66,6 @@ const NewRoomButton = styled.button`
 
     &:hover {
         background-color: #155a99;
-        color: white; /* Utrzymanie koloru tekstu */
     }
 
     &:disabled {
@@ -87,21 +74,9 @@ const NewRoomButton = styled.button`
     }
 `;
 
-const BackLink = styled(Link)`
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #1f78d1;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 18px;
-    transition: background-color 0.3s;
+const NewRoomButton = styled(ButtonBase)``;
 
-    &:hover {
-        background-color: #155a99;
-        color: white; /* Utrzymanie koloru tekstu */
-    }
-`;
+const BackButton = styled(ButtonBase)``;
 
 const Rooms = () => {
     const [rooms, setRooms] = useState([
@@ -109,6 +84,8 @@ const Rooms = () => {
         { id: 1, name: "Room 2", status: "waiting" },
         { id: 2, name: "Room 3", status: "occupied" },
     ]);
+
+    const navigate = useNavigate();
 
     const createNewRoom = () => {
         const newRoomId = rooms.length;
@@ -140,9 +117,9 @@ const Rooms = () => {
                 {rooms.map((room) => (
                     <RoomItem key={room.id} status={room.status}>
                         {room.status !== "occupied" ? (
-                            <Link to={`/game/${room.id}`}>
+                            <a href={`/game/${room.id}`} style={{ textDecoration: "none", color: "inherit" }}>
                                 {room.name} - {getStatusLabel(room.status)}
-                            </Link>
+                            </a>
                         ) : (
                             `${room.name} - ${getStatusLabel(room.status)}`
                         )}
@@ -155,7 +132,7 @@ const Rooms = () => {
             >
                 {getFreeRoomCount() >= 3 ? "Limit Reached" : "Create New Room"}
             </NewRoomButton>
-            <BackLink to="/">Back to Home</BackLink>
+            <BackButton onClick={() => navigate("/")}>Back to Home</BackButton>
         </RoomsWrapper>
     );
 };
