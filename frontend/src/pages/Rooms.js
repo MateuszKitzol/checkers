@@ -30,7 +30,7 @@ const RoomItem = styled.li`
     margin: 10px 0;
     background-color: ${(props) =>
         props.status === "free"
-            ? "#1f78d1"
+            ? "#28a745" /* Zielony dla wolnych pokoi */
             : props.status === "waiting"
                 ? "#f1c40f"
                 : "#d9534f"};
@@ -42,14 +42,26 @@ const RoomItem = styled.li`
 
     &:hover {
         background-color: ${(props) =>
-        props.status === "occupied"
-            ? "#d9534f"
-            : props.status === "free"
-                ? "#155a99"
-                : "#d4ac0d"};
+        props.status === "free"
+            ? "#218838" /* Ciemniejszy zielony dla hover */
+            : props.status === "waiting"
+                ? "#d4ac0d"
+                : "#b52b27"};
         color: white;
     }
+
+    a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        pointer-events: ${(props) => (props.status === "occupied" ? "none" : "auto")};
+
+        &:hover {
+            color: white;
+        }
+    }
 `;
+
 
 const ButtonBase = styled.button`
     margin-top: 10px; /* Zmniejszona odległość */
