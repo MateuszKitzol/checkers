@@ -20,9 +20,10 @@ const BoardWrapper = styled.div`
     justify-content: center;
     align-items: center;
     padding: 1rem;
-    background-color: #2c2c2c;
+    background-color: ${(props) => (props.isPlayerTurn ? "#1f78d1" : "#d9534f")};
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s;
 `;
 
 const NicknameDisplay = styled.div`
@@ -74,6 +75,7 @@ const Game = () => {
     const [board, setBoard] = useState(initializeBoard());
     const [selectedChecker, setSelectedChecker] = useState(null);
     const [nickname, setNickname] = useState("");
+    const [isPlayerTurn, setIsPlayerTurn] = useState(true); // true = P2, false = P1
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -102,26 +104,33 @@ const Game = () => {
                 (selectedChecker.player === "P2" && row < selectedChecker.row) ||
                 selectedChecker.isKing;
 
-            if (isDiagonalMove && isMovingForward && board[row][col] === null) {
-                // Normal move
+            if (
+                isDiagonalMove &&
+                isMovingForward &&
+                board[row][col] === null &&
+                selectedChecker.player === "P2"
+            ) {
                 moveChecker(row, col);
-            } else if (isCaptureMove && isMovingForward) {
-                // Capture move
+            } else if (
+                isCaptureMove &&
+                isMovingForward &&
+                selectedChecker.player === "P2"
+            ) {
                 const middleRow = (selectedChecker.row + row) / 2;
                 const middleCol = (selectedChecker.col + col) / 2;
                 const middleChecker = board[middleRow][middleCol];
 
                 if (middleChecker && middleChecker.player !== selectedChecker.player) {
-                    // Perform the capture
                     captureChecker(row, col, middleRow, middleCol);
                 } else {
-                    setSelectedChecker(null); // Invalid move
+                    setSelectedChecker(null);
                 }
             } else {
-                setSelectedChecker(null); // Invalid move
+                setSelectedChecker(null);
             }
-        } else if (checker) {
-            setSelectedChecker({ ...checker, row, col }); // Select a checker
+        } else if (checker && checker.player === "P2" && isPlayerTurn) {
+            // Gracz może wybierać tylko swoje pionki (P2 - niebieskie) i tylko w swojej turze
+            setSelectedChecker({ ...checker, row, col });
         }
     };
 
@@ -147,6 +156,7 @@ const Game = () => {
 
         setBoard(newBoard);
         setSelectedChecker(null); // Deselect checker after move
+        setIsPlayerTurn(!isPlayerTurn); // Zmiana tury gracza
     };
 
     const captureChecker = (row, col, middleRow, middleCol) => {
@@ -220,7 +230,7 @@ const Game = () => {
             <OpponentWrapper>
                 <NicknameDisplay isOpponent={true}>Opponent: TBD</NicknameDisplay>
             </OpponentWrapper>
-            <BoardWrapper>
+            <BoardWrapper isPlayerTurn={isPlayerTurn}>
                 <Board
                     board={board}
                     onMove={handleSquareClick}
