@@ -103,27 +103,27 @@ const Game = () => {
                 selectedChecker.isKing;
 
             if (isDiagonalMove && isMovingForward && board[row][col] === null) {
-                // Normal move
                 moveChecker(row, col);
             } else if (isCaptureMove && isMovingForward) {
-                // Capture move
                 const middleRow = (selectedChecker.row + row) / 2;
                 const middleCol = (selectedChecker.col + col) / 2;
                 const middleChecker = board[middleRow][middleCol];
 
                 if (middleChecker && middleChecker.player !== selectedChecker.player) {
-                    // Perform the capture
                     captureChecker(row, col, middleRow, middleCol);
                 } else {
-                    setSelectedChecker(null); // Invalid move
+                    setSelectedChecker(null);
                 }
             } else {
-                setSelectedChecker(null); // Invalid move
+                setSelectedChecker(null);
             }
-        } else if (checker) {
-            setSelectedChecker({ ...checker, row, col }); // Select a checker
+        } else if (checker && checker.player === "P2") {
+            // Gracz może wybierać tylko swoje pionki (P2 - niebieskie)
+            setSelectedChecker({ ...checker, row, col });
         }
     };
+
+
 
     const moveChecker = (row, col) => {
         const newBoard = board.map((r, rowIndex) =>
