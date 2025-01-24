@@ -31,10 +31,10 @@ const RoomItem = styled.li`
     margin: 10px 0;
     background-color: ${(props) =>
         props.status === "free"
-            ? "#28a745"
+            ? "#28a745" // Green for free rooms
             : props.status === "waiting"
-                ? "#f1c40f"
-                : "#d9534f"};
+                ? "#f1c40f" // Yellow for waiting rooms
+                : "#d9534f"}; // Red for occupied rooms
     color: white;
     border-radius: 5px;
     text-align: center;
@@ -44,10 +44,10 @@ const RoomItem = styled.li`
     &:hover {
         background-color: ${(props) =>
         props.status === "free"
-            ? "#218838"
+            ? "#218838" // Darker green on hover
             : props.status === "waiting"
-                ? "#d4ac0d"
-                : "#b52b27"};
+                ? "#d4ac0d" // Darker yellow on hover
+                : "#b52b27"}; // Darker red on hover
         color: white;
     }
 
@@ -94,13 +94,14 @@ const Rooms = () => {
     const navigate = useNavigate();
 
     const joinRoom = (roomId) => {
-        const nickname = localStorage.getItem("nickname"); // Retrieve nickname again
+        const nickname = localStorage.getItem("nickname"); // Retrieve nickname from localStorage
         if (!nickname) {
             alert("Nickname not found. Please set your nickname.");
             return;
         }
 
-        connection.invoke("JoinRoom", roomId, nickname)
+        connection
+            .invoke("JoinRoom", roomId, nickname)
             .then(() => {
                 console.log(`Joined room: ${roomId}`);
                 navigate(`/game/${roomId}`);
@@ -117,9 +118,9 @@ const Rooms = () => {
             });
 
             // Fetch the initial list of rooms
-            connection.invoke("GetRooms").catch((err) => {
-                console.error("Error fetching rooms:", err);
-            });
+            connection
+                .invoke("GetRooms")
+                .catch((err) => console.error("Error fetching rooms:", err));
 
             // Cleanup: Remove event listener on unmount
             return () => {
@@ -130,9 +131,9 @@ const Rooms = () => {
 
     const createRoom = () => {
         const roomName = `Room ${rooms.length + 1}`;
-        connection.invoke("CreateRoom", roomName).catch((err) => {
-            console.error("Error creating room:", err);
-        });
+        connection
+            .invoke("CreateRoom", roomName)
+            .catch((err) => console.error("Error creating room:", err));
     };
 
     const getFreeRoomCount = () => {

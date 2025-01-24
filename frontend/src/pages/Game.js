@@ -1,7 +1,8 @@
 ﻿import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Board from "../components/Board";
+import connection from "../signalr";
 
 // Styled Components
 const GameWrapper = styled.div`
@@ -72,20 +73,48 @@ const initializeBoard = () => {
 };
 
 const Game = () => {
+    const { roomId } = useParams(); // Get roomId from URL
     const [board, setBoard] = useState(initializeBoard());
     const [selectedChecker, setSelectedChecker] = useState(null);
     const [nickname, setNickname] = useState("");
-    const [isPlayerTurn, setIsPlayerTurn] = useState(true); // true = P2, false = P1
+    const [opponent, setOpponent] = useState(""); // Opponent's nickname
+    const [isPlayerTurn, setIsPlayerTurn] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         const savedNickname = localStorage.getItem("nickname");
         if (savedNickname) {
             setNickname(savedNickname);
+
+            // Join the room
+            connection
+                .invoke("JoinRoom", roomId, savedNickname)
+                .catch((err) => console.error("Error joining room:", err));
         } else {
-            navigate("/nickname"); // Przekierowanie, jeśli brak nicku
+            navigate("/nickname");
         }
-    }, [navigate]);
+
+        if (connection) {
+            // Listen for PlayerJoined event
+            connection.on("PlayerJoined", (playerName) => {
+                if (playerName !== nickname) {
+                    console.log(`${playerName} has joined the room.`);
+                    setOpponent(playerName);
+                }
+            });
+
+            // Listen for game updates
+            connection.on("UpdateGame", (gameState) => {
+                console.log("Game state updated:", gameState);
+                // Update game state here if needed
+            });
+
+            return () => {
+                connection.off("PlayerJoined");
+                connection.off("UpdateGame");
+            };
+        }
+    }, [nickname, roomId, navigate]);
 
     const handleSquareClick = (row, col) => {
         const checker = board[row][col];
@@ -129,7 +158,6 @@ const Game = () => {
                 setSelectedChecker(null);
             }
         } else if (checker && checker.player === "P2" && isPlayerTurn) {
-            // Gracz może wybierać tylko swoje pionki (P2 - niebieskie) i tylko w swojej turze
             setSelectedChecker({ ...checker, row, col });
         }
     };
@@ -156,7 +184,7 @@ const Game = () => {
 
         setBoard(newBoard);
         setSelectedChecker(null); // Deselect checker after move
-        setIsPlayerTurn(!isPlayerTurn); // Zmiana tury gracza
+        setIsPlayerTurn(!isPlayerTurn); // Switch turns
     };
 
     const captureChecker = (row, col, middleRow, middleCol) => {
@@ -184,12 +212,12 @@ const Game = () => {
 
         setBoard(newBoard);
 
-        // Check for further captures
         const canCaptureAgain = checkForAdditionalCaptures(row, col);
         if (canCaptureAgain) {
             setSelectedChecker({ ...selectedChecker, row, col });
         } else {
-            setSelectedChecker(null); // Deselect checker if no further captures are possible
+            setSelectedChecker(null); // Deselect checker
+            setIsPlayerTurn(!isPlayerTurn); // Switch turns
         }
     };
 
@@ -207,7 +235,6 @@ const Game = () => {
             const middleRow = row + rowOffset / 2;
             const middleCol = col + colOffset / 2;
 
-            // Ensure within bounds
             if (
                 newRow >= 0 &&
                 newRow < 8 &&
@@ -217,7 +244,7 @@ const Game = () => {
             ) {
                 const middleChecker = board[middleRow][middleCol];
                 if (middleChecker && middleChecker.player !== selectedChecker.player) {
-                    return true; // Further capture is possible
+                    return true;
                 }
             }
         }
@@ -228,7 +255,9 @@ const Game = () => {
     return (
         <GameWrapper>
             <OpponentWrapper>
-                <NicknameDisplay isOpponent={true}>Opponent: TBD</NicknameDisplay>
+                <NicknameDisplay isOpponent={true}>
+                    {opponent ? `Opponent: ${opponent}` : "Waiting for opponent..."}
+                </NicknameDisplay>
             </OpponentWrapper>
             <BoardWrapper isPlayerTurn={isPlayerTurn}>
                 <Board
