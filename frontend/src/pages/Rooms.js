@@ -93,7 +93,20 @@ const Rooms = () => {
     const [rooms, setRooms] = useState([]);
     const navigate = useNavigate();
 
-    const [rooms, setRooms] = useState([]);
+    const joinRoom = (roomId) => {
+        const nickname = localStorage.getItem("nickname"); // Retrieve nickname again
+        if (!nickname) {
+            alert("Nickname not found. Please set your nickname.");
+            return;
+        }
+
+        connection.invoke("JoinRoom", roomId, nickname)
+            .then(() => {
+                console.log(`Joined room: ${roomId}`);
+                navigate(`/game/${roomId}`);
+            })
+            .catch((err) => console.error("Error joining room:", err));
+    };
 
     useEffect(() => {
         if (connection) {
@@ -144,9 +157,17 @@ const Rooms = () => {
             <Title>Available Rooms</Title>
             <RoomList>
                 {rooms.map((room) => (
-                    <RoomItem key={room.id} status={room.status}>
+                    <RoomItem
+                        key={room.id}
+                        status={room.status}
+                        onClick={() => {
+                            if (room.status !== "occupied") {
+                                joinRoom(room.id);
+                            }
+                        }}
+                    >
                         {room.status !== "occupied" ? (
-                            <a href={`/game/${room.id}`}>
+                            <a href="#">
                                 {room.name} - {getStatusLabel(room.status)}
                             </a>
                         ) : (
@@ -156,7 +177,7 @@ const Rooms = () => {
                 ))}
             </RoomList>
             <NewRoomButton
-                onClick={createNewRoom}
+                onClick={createRoom}
                 disabled={getFreeRoomCount() >= 3}
             >
                 {getFreeRoomCount() >= 3 ? "Limit Reached" : "Create New Room"}
