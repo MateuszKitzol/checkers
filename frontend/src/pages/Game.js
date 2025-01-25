@@ -79,25 +79,45 @@ const Game = () => {
     const [nickname, setNickname] = useState("");
     const [opponent, setOpponent] = useState(""); // Opponent's nickname
     const [isPlayerTurn, setIsPlayerTurn] = useState(true);
+    const [currentPlayer, setCurrentPlayer] = useState(""); // Current player's nickname
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (connection) {
+            connection.on("UpdateTurn", (player) => {
+                console.log("Turn updated. Current player:", player);
+                setCurrentPlayer(player);
+            });
+
+            return () => {
+                connection.off("UpdateTurn");
+            };
+        }
+    }, []);
+
 
     useEffect(() => {
         if (!connection) return;
 
         // Listen for PlayerJoined event
-        connection.on("PlayerJoined", (players) => {
+        connection.on("PlayerJoined", (players, currentTurn) => {
             console.log("Players in room:", players);
+            console.log("Current turn:", currentTurn);
 
             // Find the opponent's name
             const opponentName = players.find((name) => name !== nickname);
             setOpponent(opponentName || ""); // Set opponent name or empty string
+
+            // Check if it's the current player's turn
+            setIsPlayerTurn(currentTurn === nickname);
         });
 
         // Cleanup function
         return () => {
             connection.off("PlayerJoined");
         };
-    }, [connection, nickname]); // React to changes in `connection` or `nickname`
+    }, [connection, nickname]);
+
 
 
     useEffect(() => {
@@ -120,6 +140,11 @@ const Game = () => {
     }, [nickname, roomId]);
 
     const handleSquareClick = (row, col) => {
+        if (nickname !== currentPlayer) {
+            alert("It's not your turn!");
+            return;
+        }
+
         const checker = board[row][col];
 
         if (selectedChecker) {
