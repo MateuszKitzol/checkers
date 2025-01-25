@@ -118,6 +118,36 @@ const Game = () => {
         };
     }, [connection, nickname]);
 
+    useEffect(() => {
+        if (!connection) return;
+
+        connection.on("ReceiveMove", (move, currentTurn) => {
+            console.log("Move received:", move);
+            console.log("Current turn:", currentTurn);
+
+            // Update the board state with the move
+            const newBoard = board.map((row, rowIndex) =>
+                row.map((square, colIndex) => {
+                    if (rowIndex === move.fromRow && colIndex === move.fromCol) {
+                        return null; // Clear the old position
+                    }
+                    if (rowIndex === move.toRow && colIndex === move.toCol) {
+                        return { player: selectedChecker.player, isKing: selectedChecker.isKing }; // Place the checker in the new position
+                    }
+                    return square;
+                })
+            );
+
+            setBoard(newBoard);
+
+            // Update the turn
+            setIsPlayerTurn(currentTurn === nickname);
+        });
+
+        return () => {
+            connection.off("ReceiveMove");
+        };
+    }, [connection, board, nickname, selectedChecker]);
 
 
     useEffect(() => {
@@ -140,7 +170,7 @@ const Game = () => {
     }, [nickname, roomId]);
 
     const handleSquareClick = (row, col) => {
-        if (nickname !== currentPlayer) {
+        if (!isPlayerTurn) {
             alert("It's not your turn!");
             return;
         }
