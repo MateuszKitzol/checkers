@@ -82,39 +82,42 @@ const Game = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!connection) return;
+
+        // Listen for PlayerJoined event
+        connection.on("PlayerJoined", (players) => {
+            console.log("Players in room:", players);
+
+            // Find the opponent's name
+            const opponentName = players.find((name) => name !== nickname);
+            setOpponent(opponentName || ""); // Set opponent name or empty string
+        });
+
+        // Cleanup function
+        return () => {
+            connection.off("PlayerJoined");
+        };
+    }, [connection, nickname]); // React to changes in `connection` or `nickname`
+
+
+    useEffect(() => {
         const savedNickname = localStorage.getItem("nickname");
         if (savedNickname) {
             setNickname(savedNickname);
 
-            // Join the room
+            // Join the room using SignalR
             connection
                 .invoke("JoinRoom", roomId, savedNickname)
                 .catch((err) => console.error("Error joining room:", err));
         } else {
-            navigate("/nickname");
+            navigate("/nickname"); // Redirect to nickname page if no nickname is found
         }
+    }, [connection, roomId, navigate]); // React to changes in connection, roomId, or navigate
 
-        if (connection) {
-            // Listen for PlayerJoined event
-            connection.on("PlayerJoined", (playerName) => {
-                if (playerName !== nickname) {
-                    console.log(`${playerName} has joined the room.`);
-                    setOpponent(playerName);
-                }
-            });
-
-            // Listen for game updates
-            connection.on("UpdateGame", (gameState) => {
-                console.log("Game state updated:", gameState);
-                // Update game state here if needed
-            });
-
-            return () => {
-                connection.off("PlayerJoined");
-                connection.off("UpdateGame");
-            };
-        }
-    }, [nickname, roomId, navigate]);
+    useEffect(() => {
+        console.log("nickname changed:", nickname);
+        console.log("roomId changed:", roomId);
+    }, [nickname, roomId]);
 
     const handleSquareClick = (row, col) => {
         const checker = board[row][col];
