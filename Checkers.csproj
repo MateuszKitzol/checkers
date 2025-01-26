@@ -14,29 +14,18 @@
     <Content Remove="wwwroot\robots.txt" />
     <Content Remove="wwwroot\static\css\main.e6c13ad2.css" />
     <Content Remove="wwwroot\static\css\main.e6c13ad2.css.map" />
-    <Content Remove="wwwroot\static\css\main.f855e6bc.css" />
-    <Content Remove="wwwroot\static\css\main.f855e6bc.css.map" />
-    <Content Remove="wwwroot\static\js\488.e75445ad.chunk.js" />
-    <Content Remove="wwwroot\static\js\488.e75445ad.chunk.js.map" />
-    <Content Remove="wwwroot\static\js\main.4d75827c.js" />
-    <Content Remove="wwwroot\static\js\main.4d75827c.js.LICENSE.txt" />
-    <Content Remove="wwwroot\static\js\main.4d75827c.js.map" />
-    <Content Remove="wwwroot\static\js\main.822f9fd1.js" />
-    <Content Remove="wwwroot\static\js\main.822f9fd1.js.LICENSE.txt" />
-    <Content Remove="wwwroot\static\js\main.822f9fd1.js.map" />
-    <Content Remove="wwwroot\static\js\main.9f3f5b3b.js" />
-    <Content Remove="wwwroot\static\js\main.9f3f5b3b.js.LICENSE.txt" />
-    <Content Remove="wwwroot\static\js\main.9f3f5b3b.js.map" />
-    <Content Remove="wwwroot\static\js\main.a6ed0245.js" />
-    <Content Remove="wwwroot\static\js\main.a6ed0245.js.LICENSE.txt" />
-    <Content Remove="wwwroot\static\js\main.a6ed0245.js.map" />
-    <Content Remove="wwwroot\static\js\main.a8545241.js" />
-    <Content Remove="wwwroot\static\js\main.a8545241.js.LICENSE.txt" />
-    <Content Remove="wwwroot\static\js\main.a8545241.js.map" />
-    <Content Remove="wwwroot\static\js\main.d54a07c0.js" />
-    <Content Remove="wwwroot\static\js\main.d54a07c0.js.LICENSE.txt" />
-    <Content Remove="wwwroot\static\js\main.d54a07c0.js.map" />
-    <Content Remove="wwwroot\static\media\logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg" />
+    <Content Remove="wwwroot\static\js\main.df6e5d98.js" />
+    <Content Remove="wwwroot\static\js\main.df6e5d98.js.LICENSE.txt" />
+    <Content Remove="wwwroot\static\js\main.df6e5d98.js.map" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="frontend\build\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,46 +36,17 @@
     <None Include="wwwroot\robots.txt" />
     <None Include="wwwroot\static\css\main.e6c13ad2.css" />
     <None Include="wwwroot\static\css\main.e6c13ad2.css.map" />
-    <None Include="wwwroot\static\css\main.f855e6bc.css" />
-    <None Include="wwwroot\static\css\main.f855e6bc.css.map" />
-    <None Include="wwwroot\static\js\488.e75445ad.chunk.js" />
-    <None Include="wwwroot\static\js\488.e75445ad.chunk.js.map" />
-    <None Include="wwwroot\static\js\main.4d75827c.js" />
-    <None Include="wwwroot\static\js\main.4d75827c.js.LICENSE.txt" />
-    <None Include="wwwroot\static\js\main.4d75827c.js.map" />
-    <None Include="wwwroot\static\js\main.822f9fd1.js" />
-    <None Include="wwwroot\static\js\main.822f9fd1.js.LICENSE.txt" />
-    <None Include="wwwroot\static\js\main.822f9fd1.js.map" />
-    <None Include="wwwroot\static\js\main.9f3f5b3b.js" />
-    <None Include="wwwroot\static\js\main.9f3f5b3b.js.LICENSE.txt" />
-    <None Include="wwwroot\static\js\main.9f3f5b3b.js.map" />
-    <None Include="wwwroot\static\js\main.a6ed0245.js" />
-    <None Include="wwwroot\static\js\main.a6ed0245.js.LICENSE.txt" />
-    <None Include="wwwroot\static\js\main.a6ed0245.js.map" />
-    <None Include="wwwroot\static\js\main.a8545241.js" />
-    <None Include="wwwroot\static\js\main.a8545241.js.LICENSE.txt" />
-    <None Include="wwwroot\static\js\main.a8545241.js.map" />
-    <None Include="wwwroot\static\js\main.d54a07c0.js" />
-    <None Include="wwwroot\static\js\main.d54a07c0.js.LICENSE.txt" />
-    <None Include="wwwroot\static\js\main.d54a07c0.js.map" />
-    <None Include="wwwroot\static\media\logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.0" />
+    <None Include="wwwroot\static\js\main.df6e5d98.js" />
+    <None Include="wwwroot\static\js\main.df6e5d98.js.LICENSE.txt" />
+    <None Include="wwwroot\static\js\main.df6e5d98.js.map" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Update="wwwroot\asset-manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
     <Content Update="wwwroot\manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>
 

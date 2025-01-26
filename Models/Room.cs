@@ -6,6 +6,7 @@
         public string Name { get; set; }             // Name of the room
         public string Status { get; set; }           // Status of the room (free, waiting, occupied)
         public List<string> Players { get; set; }    // List of players in the room
+        public string CurrentTurn { get; set; } // Player who has the current turn
 
         public Room()
         {

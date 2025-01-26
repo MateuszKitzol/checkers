@@ -73,81 +73,70 @@ const initializeBoard = () => {
 };
 
 const Game = () => {
-    const { roomId } = useParams(); // Get roomId from URL
+    const { roomId } = useParams();
     const [board, setBoard] = useState(initializeBoard());
     const [selectedChecker, setSelectedChecker] = useState(null);
     const [nickname, setNickname] = useState("");
-    const [opponent, setOpponent] = useState(""); // Opponent's nickname
-    const [isPlayerTurn, setIsPlayerTurn] = useState(true);
-    const [currentPlayer, setCurrentPlayer] = useState(""); // Current player's nickname
+    const [opponent, setOpponent] = useState("");
+    const [isPlayerTurn, setIsPlayerTurn] = useState(false); // Default to false to prevent assumption
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (connection) {
-            connection.on("UpdateTurn", (player) => {
-                console.log("Turn updated. Current player:", player);
-                setCurrentPlayer(player);
-            });
-
-            return () => {
-                connection.off("UpdateTurn");
-            };
-        }
-    }, []);
-
-
-    useEffect(() => {
         if (!connection) return;
 
-        // Listen for PlayerJoined event
+        // Start SignalR connection if not already started
+        if (connection.state === "Disconnected") {
+            connection.start().then(() => {
+                console.log("[DEBUG] SignalR connection started");
+            });
+        }
+
+        // Log ConnectionId for debugging
+        console.log("[DEBUG] SignalR ConnectionId:", connection.connectionId);
+
+        // Listen for players joining and the initial turn
         connection.on("PlayerJoined", (players, currentTurn) => {
-            console.log("Players in room:", players);
-            console.log("Current turn:", currentTurn);
+            console.log("[DEBUG] Players in room:", players);
+            console.log("[DEBUG] Current turn:", currentTurn);
 
-            // Find the opponent's name
             const opponentName = players.find((name) => name !== nickname);
-            setOpponent(opponentName || ""); // Set opponent name or empty string
+            setOpponent(opponentName || "");
 
-            // Check if it's the current player's turn
-            setIsPlayerTurn(currentTurn === nickname);
+            // Use ConnectionId for turn sync
+            setIsPlayerTurn(currentTurn === connection.connectionId);
         });
 
-        // Cleanup function
+        // Listen for turn updates
+        connection.on("UpdateTurn", (currentTurn) => {
+            console.log("[DEBUG] Turn updated to:", currentTurn);
+            setIsPlayerTurn(currentTurn === connection.connectionId);
+        });
+
+        // Listen for move events
+        connection.on("ReceiveMove", (move) => {
+            console.log("[DEBUG] Move received:", move);
+
+            setBoard((prevBoard) => {
+                const newBoard = prevBoard.map((row) => [...row]);
+
+                // Update the board based on the received move
+                newBoard[move.fromRow][move.fromCol] = null;
+                newBoard[move.toRow][move.toCol] = {
+                    player: move.isOpponent ? "P1" : "P2",
+                    isKing: move.isKing,
+                };
+
+                return newBoard;
+            });
+        });
+
+        // Cleanup events on unmount
         return () => {
             connection.off("PlayerJoined");
-        };
-    }, [connection, nickname]);
-
-    useEffect(() => {
-        if (!connection) return;
-
-        connection.on("ReceiveMove", (move, currentTurn) => {
-            console.log("Move received:", move);
-            console.log("Current turn:", currentTurn);
-
-            // Update the board state with the move
-            const newBoard = board.map((row, rowIndex) =>
-                row.map((square, colIndex) => {
-                    if (rowIndex === move.fromRow && colIndex === move.fromCol) {
-                        return null; // Clear the old position
-                    }
-                    if (rowIndex === move.toRow && colIndex === move.toCol) {
-                        return { player: selectedChecker.player, isKing: selectedChecker.isKing }; // Place the checker in the new position
-                    }
-                    return square;
-                })
-            );
-
-            setBoard(newBoard);
-
-            // Update the turn
-            setIsPlayerTurn(currentTurn === nickname);
-        });
-
-        return () => {
+            connection.off("UpdateTurn");
             connection.off("ReceiveMove");
         };
-    }, [connection, board, nickname, selectedChecker]);
+    }, [connection, nickname]);
 
 
     useEffect(() => {
@@ -155,23 +144,18 @@ const Game = () => {
         if (savedNickname) {
             setNickname(savedNickname);
 
-            // Join the room using SignalR
-            connection
-                .invoke("JoinRoom", roomId, savedNickname)
-                .catch((err) => console.error("Error joining room:", err));
+            // Join the room
+            connection.invoke("JoinRoom", roomId, savedNickname).catch((err) => {
+                console.error("[DEBUG] Error joining room:", err);
+            });
         } else {
-            navigate("/nickname"); // Redirect to nickname page if no nickname is found
+            navigate("/nickname");
         }
-    }, [connection, roomId, navigate]); // React to changes in connection, roomId, or navigate
-
-    useEffect(() => {
-        console.log("nickname changed:", nickname);
-        console.log("roomId changed:", roomId);
-    }, [nickname, roomId]);
+    }, [roomId, navigate]);
 
     const handleSquareClick = (row, col) => {
         if (!isPlayerTurn) {
-            alert("It's not your turn!");
+            console.log("[DEBUG] Not your turn.");
             return;
         }
 
@@ -182,40 +166,19 @@ const Game = () => {
                 Math.abs(selectedChecker.row - row) === 1 &&
                 Math.abs(selectedChecker.col - col) === 1;
 
-            const isCaptureMove =
-                Math.abs(selectedChecker.row - row) === 2 &&
-                Math.abs(selectedChecker.col - col) === 2;
-
             const isMovingForward =
                 (selectedChecker.player === "P1" && row > selectedChecker.row) ||
                 (selectedChecker.player === "P2" && row < selectedChecker.row) ||
                 selectedChecker.isKing;
 
-            if (
-                isDiagonalMove &&
-                isMovingForward &&
-                board[row][col] === null &&
-                selectedChecker.player === "P2"
-            ) {
+            if (isDiagonalMove && isMovingForward && board[row][col] === null) {
                 moveChecker(row, col);
-            } else if (
-                isCaptureMove &&
-                isMovingForward &&
-                selectedChecker.player === "P2"
-            ) {
-                const middleRow = (selectedChecker.row + row) / 2;
-                const middleCol = (selectedChecker.col + col) / 2;
-                const middleChecker = board[middleRow][middleCol];
-
-                if (middleChecker && middleChecker.player !== selectedChecker.player) {
-                    captureChecker(row, col, middleRow, middleCol);
-                } else {
-                    setSelectedChecker(null);
-                }
             } else {
+                console.log("[DEBUG] Invalid move.");
                 setSelectedChecker(null);
             }
         } else if (checker && checker.player === "P2" && isPlayerTurn) {
+            console.log("[DEBUG] Selecting checker:", checker);
             setSelectedChecker({ ...checker, row, col });
         }
     };
@@ -223,91 +186,36 @@ const Game = () => {
     const moveChecker = (row, col) => {
         const newBoard = board.map((r, rowIndex) =>
             r.map((square, colIndex) => {
-                if (rowIndex === selectedChecker.row && colIndex === selectedChecker.col) {
-                    return null; // Clear the original position
+                if (
+                    rowIndex === selectedChecker.row &&
+                    colIndex === selectedChecker.col
+                ) {
+                    return null;
                 }
                 if (rowIndex === row && colIndex === col) {
-                    return selectedChecker; // Place the checker in the new position
+                    return selectedChecker;
                 }
                 return square;
             })
         );
 
-        // Check for king promotion
-        if (row === 0 && selectedChecker.player === "P2") {
-            selectedChecker.isKing = true;
-        } else if (row === 7 && selectedChecker.player === "P1") {
-            selectedChecker.isKing = true;
-        }
-
-        setBoard(newBoard);
-        setSelectedChecker(null); // Deselect checker after move
-        setIsPlayerTurn(!isPlayerTurn); // Switch turns
-    };
-
-    const captureChecker = (row, col, middleRow, middleCol) => {
-        const newBoard = board.map((r, rowIndex) =>
-            r.map((square, colIndex) => {
-                if (rowIndex === selectedChecker.row && colIndex === selectedChecker.col) {
-                    return null; // Clear the original position
-                }
-                if (rowIndex === middleRow && colIndex === middleCol) {
-                    return null; // Remove the captured checker
-                }
-                if (rowIndex === row && colIndex === col) {
-                    return selectedChecker; // Place the checker in the new position
-                }
-                return square;
-            })
-        );
-
-        // Check for king promotion
-        if (row === 0 && selectedChecker.player === "P2") {
-            selectedChecker.isKing = true;
-        } else if (row === 7 && selectedChecker.player === "P1") {
-            selectedChecker.isKing = true;
-        }
-
         setBoard(newBoard);
 
-        const canCaptureAgain = checkForAdditionalCaptures(row, col);
-        if (canCaptureAgain) {
-            setSelectedChecker({ ...selectedChecker, row, col });
-        } else {
-            setSelectedChecker(null); // Deselect checker
-            setIsPlayerTurn(!isPlayerTurn); // Switch turns
-        }
-    };
+        const move = {
+            fromRow: selectedChecker.row,
+            fromCol: selectedChecker.col,
+            toRow: row,
+            toCol: col,
+            isKing: selectedChecker.isKing,
+        };
 
-    const checkForAdditionalCaptures = (row, col) => {
-        const directions = [
-            [-2, -2],
-            [-2, 2],
-            [2, -2],
-            [2, 2],
-        ];
+        console.log("[DEBUG] Sending move:", move);
 
-        for (const [rowOffset, colOffset] of directions) {
-            const newRow = row + rowOffset;
-            const newCol = col + colOffset;
-            const middleRow = row + rowOffset / 2;
-            const middleCol = col + colOffset / 2;
+        connection.invoke("SendMove", roomId, move).catch((err) => {
+            console.error("[DEBUG] Error sending move:", err);
+        });
 
-            if (
-                newRow >= 0 &&
-                newRow < 8 &&
-                newCol >= 0 &&
-                newCol < 8 &&
-                board[newRow][newCol] === null
-            ) {
-                const middleChecker = board[middleRow][middleCol];
-                if (middleChecker && middleChecker.player !== selectedChecker.player) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        setSelectedChecker(null);
     };
 
     return (
