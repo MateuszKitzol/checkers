@@ -178,17 +178,20 @@ const Game = () => {
         const checker = board[row][col];
 
         if (selectedChecker) {
-            const isDiagonalMove =
-                Math.abs(selectedChecker.row - row) === 1 &&
-                Math.abs(selectedChecker.col - col) === 1;
+            const rowDiff = Math.abs(selectedChecker.row - row);
+            const colDiff = Math.abs(selectedChecker.col - col);
 
-            const isMovingForward =
-                (selectedChecker.player === "P1" && row > selectedChecker.row) ||
-                (selectedChecker.player === "P2" && row < selectedChecker.row) ||
-                selectedChecker.isKing;
+            const isCapture =
+                rowDiff === 2 && colDiff === 2 && isOpponentChecker(selectedChecker, row, col);
 
-            if (isDiagonalMove && isMovingForward && board[row][col] === null) {
-                moveChecker(row, col);
+            const isRegularMove =
+                rowDiff === 1 &&
+                colDiff === 1 &&
+                board[row][col] === null &&
+                isMovingForward(selectedChecker, row);
+
+            if ((isRegularMove || isCapture) && board[row][col] === null) {
+                moveChecker(row, col, isCapture);
             } else {
                 console.log("[DEBUG] Invalid move.");
                 setSelectedChecker(null);
@@ -199,21 +202,41 @@ const Game = () => {
         }
     };
 
-    const moveChecker = (row, col) => {
+    const isOpponentChecker = (checker, targetRow, targetCol) => {
+        const midRow = (checker.row + targetRow) / 2;
+        const midCol = (checker.col + targetCol) / 2;
+        const midSquare = board[midRow][midCol];
+
+        return midSquare && midSquare.player === "P1"; // Opponent is "P1"
+    };
+
+    const isMovingForward = (checker, targetRow) => {
+        return (
+            (checker.player === "P1" && targetRow > checker.row) || // P1 moves down
+            (checker.player === "P2" && targetRow < checker.row) || // P2 moves up
+            checker.isKing // Kings can move in any direction
+        );
+    };
+
+    const moveChecker = (row, col, isCapture) => {
         const newBoard = board.map((r, rowIndex) =>
             r.map((square, colIndex) => {
-                if (
-                    rowIndex === selectedChecker.row &&
-                    colIndex === selectedChecker.col
-                ) {
-                    return null;
+                if (rowIndex === selectedChecker.row && colIndex === selectedChecker.col) {
+                    return null; // Clear the original position
                 }
                 if (rowIndex === row && colIndex === col) {
-                    return selectedChecker;
+                    return selectedChecker; // Place the checker at the new position
                 }
-                return square;
+                return square; // Leave other squares unchanged
             })
         );
+
+        // Remove the captured checker
+        if (isCapture) {
+            const midRow = (selectedChecker.row + row) / 2;
+            const midCol = (selectedChecker.col + col) / 2;
+            newBoard[midRow][midCol] = null; // Remove the opponent's checker
+        }
 
         setBoard(newBoard);
 
@@ -223,6 +246,7 @@ const Game = () => {
             toRow: row,
             toCol: col,
             isKing: selectedChecker.isKing,
+            isCapture,
         };
 
         console.log("[DEBUG] Sending move:", move);
@@ -232,7 +256,45 @@ const Game = () => {
         });
 
         setSelectedChecker(null);
+
+        // Allow chain captures: Check if additional captures are possible
+        if (isCapture && canCapture(row, col)) {
+            setSelectedChecker({ ...selectedChecker, row, col });
+        } else {
+            setIsPlayerTurn(false); // Switch turn
+        }
     };
+
+    const canCapture = (row, col) => {
+        const directions = [
+            [-2, -2],
+            [-2, 2],
+            [2, -2],
+            [2, 2],
+        ];
+
+        return directions.some(([dRow, dCol]) => {
+            const targetRow = row + dRow;
+            const targetCol = col + dCol;
+
+            if (
+                targetRow >= 0 &&
+                targetRow < 8 &&
+                targetCol >= 0 &&
+                targetCol < 8 &&
+                board[targetRow][targetCol] === null // Target square must be empty
+            ) {
+                const midRow = (row + targetRow) / 2;
+                const midCol = (col + targetCol) / 2;
+                const midSquare = board[midRow][midCol];
+
+                return midSquare && midSquare.player === "P1"; // Opponent is "P1"
+            }
+
+            return false;
+        });
+    };
+
 
     return (
         <GameWrapper>
