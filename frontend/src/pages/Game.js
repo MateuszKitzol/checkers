@@ -243,7 +243,9 @@ const Game = () => {
                     const isKing =
                         (selectedChecker.player === "P1" && row === 7) ||
                         (selectedChecker.player === "P2" && row === 0);
-                    return { ...selectedChecker, isKing };
+                    selectedChecker.isKing = selectedChecker.isKing || isKing; // Retain king status or promote
+                    return { ...selectedChecker, isKing: selectedChecker.isKing };
+
                 }
                 return square;
             })
@@ -263,9 +265,7 @@ const Game = () => {
             fromCol: selectedChecker.col,
             toRow: row,
             toCol: col,
-            isKing:
-                (selectedChecker.player === "P1" && row === 7) ||
-                (selectedChecker.player === "P2" && row === 0), // Send king status to the server
+            isKing: selectedChecker.isKing,
             isCapture,
         };
 
