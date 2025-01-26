@@ -138,7 +138,7 @@ const Game = () => {
                 // Update the board based on the move
                 newBoard[adjustedMove.fromRow][adjustedMove.fromCol] = null;
                 newBoard[adjustedMove.toRow][adjustedMove.toCol] = {
-                    player: isOpponentMove ? "P1" : "P2",
+                    player: isOpponentMove ? "P1" : "P2", // Assign based on who made the move
                     isKing: adjustedMove.isKing,
                 };
 
@@ -150,8 +150,12 @@ const Game = () => {
                 return newBoard;
             });
 
-            console.log("[DEBUG] Move applied as", isOpponentMove ? "opponent's move" : "player's own move");
+            console.log(
+                "[DEBUG] Move applied as",
+                isOpponentMove ? "opponent's move" : "player's own move"
+            );
         });
+
 
         // Cleanup events on unmount
         return () => {
@@ -228,13 +232,20 @@ const Game = () => {
     const moveChecker = (row, col, isCapture) => {
         const newBoard = board.map((r, rowIndex) =>
             r.map((square, colIndex) => {
-                if (rowIndex === selectedChecker.row && colIndex === selectedChecker.col) {
+                if (
+                    rowIndex === selectedChecker.row &&
+                    colIndex === selectedChecker.col
+                ) {
                     return null; // Clear the original position
                 }
                 if (rowIndex === row && colIndex === col) {
-                    return selectedChecker; // Place the checker at the new position
+                    // Mark as king if the checker reaches the opponent's end
+                    const isKing =
+                        (selectedChecker.player === "P1" && row === 7) ||
+                        (selectedChecker.player === "P2" && row === 0);
+                    return { ...selectedChecker, isKing };
                 }
-                return square; // Leave other squares unchanged
+                return square;
             })
         );
 
@@ -252,7 +263,9 @@ const Game = () => {
             fromCol: selectedChecker.col,
             toRow: row,
             toCol: col,
-            isKing: selectedChecker.isKing,
+            isKing:
+                (selectedChecker.player === "P1" && row === 7) ||
+                (selectedChecker.player === "P2" && row === 0), // Send king status to the server
             isCapture,
         };
 
@@ -271,6 +284,7 @@ const Game = () => {
             setIsPlayerTurn(false); // Switch turn
         }
     };
+
 
     const canCapture = (row, col) => {
         const directions = [

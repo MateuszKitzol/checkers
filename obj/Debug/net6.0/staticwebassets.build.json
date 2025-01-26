@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "ISm3lsWHzMwgnaugu4Xq2BqdflaPwOezrWBf9kQnYN0=",
+  "Hash": "sr8shjnNz5k1P6qxQD1AEaULRDiWvoLnlql+9NPmhkE=",
   "Source": "Checkers",
   "BasePath": "_content/Checkers",
   "Mode": "Default",
@@ -83,6 +83,57 @@
       "CopyToOutputDirectory": "PreserveNewest",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\manifest.json"
+    },
+    {
+      "Identity": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\static\\js\\main.671cd832.js",
+      "SourceId": "Checkers",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\",
+      "BasePath": "_content/Checkers",
+      "RelativePath": "static/js/main.671cd832.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\static\\js\\main.671cd832.js"
+    },
+    {
+      "Identity": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\static\\js\\main.671cd832.js.LICENSE.txt",
+      "SourceId": "Checkers",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\",
+      "BasePath": "_content/Checkers",
+      "RelativePath": "static/js/main.671cd832.js.LICENSE.txt",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\static\\js\\main.671cd832.js.LICENSE.txt"
+    },
+    {
+      "Identity": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\static\\js\\main.671cd832.js.map",
+      "SourceId": "Checkers",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\",
+      "BasePath": "_content/Checkers",
+      "RelativePath": "static/js/main.671cd832.js.map",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\static\\js\\main.671cd832.js.map"
     }
   ]
 }

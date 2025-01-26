@@ -6,5 +6,6 @@
         public int FromCol { get; set; }
         public int ToRow { get; set; }
         public int ToCol { get; set; }
+        public bool IsKing { get; set; }
     }
 }

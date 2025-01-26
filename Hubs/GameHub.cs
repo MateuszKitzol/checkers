@@ -84,7 +84,7 @@ namespace Checkers.Hubs
 
         public async Task SendMove(string roomId, Move move)
         {
-            Console.WriteLine($"[DEBUG] Move received: {move.FromRow},{move.FromCol} -> {move.ToRow},{move.ToCol}");
+            Console.WriteLine($"[DEBUG] Move received: Room ID = {roomId}, Move = {move.FromRow},{move.FromCol} -> {move.ToRow},{move.ToCol}");
 
             if (!Rooms.TryGetValue(roomId, out var room))
             {
@@ -97,13 +97,21 @@ namespace Checkers.Hubs
             {
                 if (playerId != Context.ConnectionId) // Send move to the opponent
                 {
-                    await Clients.Client(playerId).SendAsync("ReceiveMove", move);
+                    // Include capture information
+                    var captureRow = (move.FromRow + move.ToRow) / 2; // Middle row
+                    var captureCol = (move.FromCol + move.ToCol) / 2; // Middle column
+
+                    bool isCapture = Math.Abs(move.FromRow - move.ToRow) == 2;
+
+                    Console.WriteLine($"[DEBUG] Sending move to player: {playerId}");
+                    await Clients.Client(playerId).SendAsync("ReceiveMove", move, Context.ConnectionId, isCapture, captureRow, captureCol);
                 }
             }
 
             // Change the turn to the next player
             await ChangeTurn(roomId);
         }
+
 
         public async Task ChangeTurn(string roomId)
         {
