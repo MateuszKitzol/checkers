@@ -113,22 +113,38 @@ const Game = () => {
         });
 
         // Listen for move events
-        connection.on("ReceiveMove", (move) => {
-            console.log("[DEBUG] Move received:", move);
+        connection.on("ReceiveMove", (move, playerId) => {
+            console.log("[DEBUG] Move received:", move, "Player who made the move:", playerId);
+
+            // Check if the move was made by the opponent
+            const isOpponentMove = playerId !== connection.connectionId;
+
+            const adjustedMove = isOpponentMove
+                ? {
+                    fromRow: 7 - move.fromRow,
+                    fromCol: 7 - move.fromCol,
+                    toRow: 7 - move.toRow,
+                    toCol: 7 - move.toCol,
+                    isKing: move.isKing,
+                }
+                : move; // Use the move directly for the current player
 
             setBoard((prevBoard) => {
                 const newBoard = prevBoard.map((row) => [...row]);
 
-                // Update the board based on the received move
-                newBoard[move.fromRow][move.fromCol] = null;
-                newBoard[move.toRow][move.toCol] = {
-                    player: move.isOpponent ? "P1" : "P2",
-                    isKing: move.isKing,
+                // Update the board based on the adjusted move
+                newBoard[adjustedMove.fromRow][adjustedMove.fromCol] = null;
+                newBoard[adjustedMove.toRow][adjustedMove.toCol] = {
+                    player: isOpponentMove ? "P1" : "P2", // Assign based on who made the move
+                    isKing: adjustedMove.isKing,
                 };
 
                 return newBoard;
             });
+
+            console.log("[DEBUG] Move applied as", isOpponentMove ? "opponent's move" : "player's own move");
         });
+
 
         // Cleanup events on unmount
         return () => {
