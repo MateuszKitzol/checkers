@@ -70,18 +70,18 @@ const GameOverMessageBox = styled.div`
 `;
 
 const GameOverButton = styled.button`
-    margin-top: 20px;
+    margin: 10px;
     padding: 10px 20px;
     font-size: 1rem;
     color: white;
-    background-color: #d9534f;
+    background-color: #1f78d1;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: #c9302c; // Darker red on hover
+        background-color: #155a99; // Darker blue on hover
     }
 `;
 
@@ -361,11 +361,13 @@ const Game = () => {
 
 
 
-    const checkGameOver = () => {
+    const checkGameOver = (currentBoard) => {
+        console.log("[DEBUG] Current Player Nickname:", nickname);
+        console.log("[DEBUG] Opponent Nickname:", opponent);
+
         const player1Checkers = [];
         const player2Checkers = [];
 
-        // Traverse the board to count checkers and valid moves
         board.forEach((row, rowIndex) => {
             row.forEach((square, colIndex) => {
                 if (square && square.player === "P1") {
@@ -377,16 +379,13 @@ const Game = () => {
             });
         });
 
-        console.log("[DEBUG] Player 1 Checkers:", player1Checkers);
-        console.log("[DEBUG] Player 2 Checkers:", player2Checkers);
-
         // Check if either player has no checkers
         if (player1Checkers.length === 0) {
-            setGameOverMessage("Player 2 wins!");
+            setGameOverMessage(`${opponent} wins! ${nickname} has no remaining checkers.`);
             return true;
         }
         if (player2Checkers.length === 0) {
-            setGameOverMessage("Player 1 wins!");
+            setGameOverMessage(`${nickname} wins! ${opponent} has no remaining checkers.`);
             return true;
         }
 
@@ -399,17 +398,17 @@ const Game = () => {
         );
 
         if (!canPlayer1Move) {
-            setGameOverMessage("Player 2 wins! Player 1 has no valid moves.");
+            setGameOverMessage(`${opponent} wins! ${nickname} has no valid moves.`);
             return true;
         }
         if (!canPlayer2Move) {
-            setGameOverMessage("Player 1 wins! Player 2 has no valid moves.");
+            setGameOverMessage(`${nickname} wins! ${opponent} has no valid moves.`);
             return true;
         }
 
-
         return false;
     };
+
 
     useEffect(() => {
         if (checkGameOver()) {
@@ -461,6 +460,13 @@ const Game = () => {
         });
     };
 
+    const resetGame = () => {
+        setBoard(initializeBoard()); // Reset the board to the initial state
+        setSelectedChecker(null); // Clear any selected checker
+        setIsPlayerTurn(true); // Reset turn to Player 1 (or whichever starts)
+        setGameOverMessage(""); // Clear the game-over message
+    };
+
     return (
         <GameWrapper>
             <OpponentWrapper>
@@ -480,6 +486,10 @@ const Game = () => {
             <GameOverOverlay visible={gameOverMessage !== ""}>
                 <GameOverMessageBox>
                     <div>{gameOverMessage}</div>
+                    <div>
+                        {/* Redirects to the default URL */}
+                        <GameOverButton onClick={() => navigate("/")}>Menu</GameOverButton>
+                    </div>
                 </GameOverMessageBox>
             </GameOverOverlay>
         </GameWrapper>
