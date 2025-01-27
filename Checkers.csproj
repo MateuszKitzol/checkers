@@ -14,9 +14,9 @@
     <Content Remove="wwwroot\robots.txt" />
     <Content Remove="wwwroot\static\css\main.e6c13ad2.css" />
     <Content Remove="wwwroot\static\css\main.e6c13ad2.css.map" />
-    <Content Remove="wwwroot\static\js\main.df6e5d98.js" />
-    <Content Remove="wwwroot\static\js\main.df6e5d98.js.LICENSE.txt" />
-    <Content Remove="wwwroot\static\js\main.df6e5d98.js.map" />
+    <Content Remove="wwwroot\static\js\main.d5937714.js" />
+    <Content Remove="wwwroot\static\js\main.d5937714.js.LICENSE.txt" />
+    <Content Remove="wwwroot\static\js\main.d5937714.js.map" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,9 +36,9 @@
     <None Include="wwwroot\robots.txt" />
     <None Include="wwwroot\static\css\main.e6c13ad2.css" />
     <None Include="wwwroot\static\css\main.e6c13ad2.css.map" />
-    <None Include="wwwroot\static\js\main.df6e5d98.js" />
-    <None Include="wwwroot\static\js\main.df6e5d98.js.LICENSE.txt" />
-    <None Include="wwwroot\static\js\main.df6e5d98.js.map" />
+    <None Include="wwwroot\static\js\main.d5937714.js" />
+    <None Include="wwwroot\static\js\main.d5937714.js.LICENSE.txt" />
+    <None Include="wwwroot\static\js\main.d5937714.js.map" />
   </ItemGroup>
 
   <ItemGroup>

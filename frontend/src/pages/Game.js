@@ -45,22 +45,46 @@ const OpponentWrapper = styled.div`
     margin-bottom: 20px;
 `;
 
-const ResetButton = styled.button`
+const GameOverOverlay = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); // Semi-transparent black
+    display: ${(props) => (props.visible ? "flex" : "none")}; // Show or hide
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    color: white;
+    font-size: 2rem;
+    text-align: center;
+`;
+
+const GameOverMessageBox = styled.div`
+    background-color: #222; // Darker box for the message
+    padding: 20px 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+`;
+
+const GameOverButton = styled.button`
     margin-top: 20px;
     padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: none;
-    background-color: ${(props) => (props.disabled ? "#888" : "#d9534f")};
+    font-size: 1rem;
     color: white;
-    cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+    background-color: #d9534f;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: ${(props) =>
-        props.disabled ? "#888" : "#c9302c"}; // Darker red on hover
+        background-color: #c9302c; // Darker red on hover
     }
 `;
+
 
 // Initialize the board with checkers
 const initializeBoard = () => {
@@ -96,6 +120,7 @@ const Game = () => {
     const [nickname, setNickname] = useState("");
     const [opponent, setOpponent] = useState("");
     const [isPlayerTurn, setIsPlayerTurn] = useState(false); // Default to false to prevent assumption
+    const [gameOverMessage, setGameOverMessage] = useState(""); // Stores the game-over message
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -357,11 +382,11 @@ const Game = () => {
 
         // Check if either player has no checkers
         if (player1Checkers.length === 0) {
-            alert("Player 2 wins!");
+            setGameOverMessage("Player 2 wins!");
             return true;
         }
         if (player2Checkers.length === 0) {
-            alert("Player 1 wins!");
+            setGameOverMessage("Player 1 wins!");
             return true;
         }
 
@@ -374,13 +399,14 @@ const Game = () => {
         );
 
         if (!canPlayer1Move) {
-            alert("Player 2 wins! Player 1 has no valid moves.");
+            setGameOverMessage("Player 2 wins! Player 1 has no valid moves.");
             return true;
         }
         if (!canPlayer2Move) {
-            alert("Player 1 wins! Player 2 has no valid moves.");
+            setGameOverMessage("Player 1 wins! Player 2 has no valid moves.");
             return true;
         }
+
 
         return false;
     };
@@ -450,6 +476,12 @@ const Game = () => {
                 />
             </BoardWrapper>
             <NicknameDisplay>{nickname}</NicknameDisplay>
+            {/* Game-Over Overlay */}
+            <GameOverOverlay visible={gameOverMessage !== ""}>
+                <GameOverMessageBox>
+                    <div>{gameOverMessage}</div>
+                </GameOverMessageBox>
+            </GameOverOverlay>
         </GameWrapper>
     );
 };
