@@ -359,15 +359,11 @@ const Game = () => {
         });
     };
 
-
-
-    const checkGameOver = (currentBoard) => {
-        console.log("[DEBUG] Current Player Nickname:", nickname);
-        console.log("[DEBUG] Opponent Nickname:", opponent);
-
+    const checkGameOver = (currentBoard, currentPlayer) => {
         const player1Checkers = [];
         const player2Checkers = [];
 
+        // Traverse the board and count Player 1 and Player 2 checkers
         board.forEach((row, rowIndex) => {
             row.forEach((square, colIndex) => {
                 if (square && square.player === "P1") {
@@ -379,17 +375,11 @@ const Game = () => {
             });
         });
 
-        // Check if either player has no checkers
-        if (player1Checkers.length === 0) {
-            setGameOverMessage(`${opponent} wins! ${nickname} has no remaining checkers.`);
-            return true;
-        }
-        if (player2Checkers.length === 0) {
-            setGameOverMessage(`${nickname} wins! ${opponent} has no remaining checkers.`);
-            return true;
-        }
+        console.log("[DEBUG] Player 1 Checkers:", player1Checkers.length);
+        console.log("[DEBUG] Player 2 Checkers:", player2Checkers.length);
 
-        // Check if either player has no valid moves
+
+        // Check if a player has no valid moves
         const canPlayer1Move = player1Checkers.some((checker) =>
             canCheckerMove(checker.row, checker.col, "P1")
         );
@@ -397,18 +387,21 @@ const Game = () => {
             canCheckerMove(checker.row, checker.col, "P2")
         );
 
-        if (!canPlayer1Move) {
-            setGameOverMessage(`${opponent} wins! ${nickname} has no valid moves.`);
+        // Determine if a player has no remaining checkers
+        if (player1Checkers.length === 0) {
+            setGameOverMessage(`You won! ${opponent} has no remaining checkers.`);
             return true;
-        }
-        if (!canPlayer2Move) {
-            setGameOverMessage(`${nickname} wins! ${opponent} has no valid moves.`);
+        } else if (!canPlayer1Move) {
+            setGameOverMessage(`You won! ${opponent} has no valid moves.`);
+        } else if (player2Checkers.length === 0) {
+            setGameOverMessage(`${opponent} wins! You have no remaining checkers.`);
             return true;
+        } else if (!canPlayer1Move) {
+            setGameOverMessage(`${opponent} wins! You have no valid moves.`);
         }
 
         return false;
     };
-
 
     useEffect(() => {
         if (checkGameOver()) {
