@@ -404,11 +404,22 @@ const Game = () => {
     };
 
     useEffect(() => {
-        if (checkGameOver()) {
+        if (checkGameOver(board)) {
             console.log("[DEBUG] Game Over detected!");
-            return;
+
+            // Notify the backend to reset the room state
+            connection.invoke("EndGame", roomId)
+                .then(() => console.log("[DEBUG] Room reset to free state after 3 seconds."))
+                .catch((err) => console.error("[ERROR] Failed to reset room state:", err));
+
+            // Redirect to the rooms page after 3 seconds
+            const timer = setTimeout(() => {
+                navigate("/rooms"); // Redirect players to the rooms page
+            }, 3000);
+
+            return () => clearTimeout(timer); // Cleanup the timer on unmount
         }
-    }, [board]); // Runs every time the board changes
+    }, [board, connection, roomId, navigate]);
 
     const canCheckerMove = (row, col, player) => {
         const directions = player === "P1" || board[row][col].isKing

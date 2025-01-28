@@ -170,5 +170,29 @@ namespace Checkers.Hubs
                 await Clients.Group(roomId).SendAsync("UpdateTurn", room.CurrentTurn);
             }
         }
+
+        public async Task EndGame(string roomId)
+        {
+            if (!Rooms.TryGetValue(roomId, out var room))
+            {
+                Console.WriteLine($"[DEBUG] Room {roomId} not found.");
+                return;
+            }
+
+            Console.WriteLine($"[DEBUG] Game ending in room {roomId}. Waiting 3 seconds before resetting...");
+
+            // Wait for 3 seconds before resetting the room
+            await Task.Delay(3000);
+
+            room.Status = "free"; // Reset the room status
+            room.CurrentTurn = null; // Reset the turn state
+            room.Players.Clear(); // Clear players list
+
+            Console.WriteLine($"[DEBUG] Room {roomId} reset to free and players cleared.");
+
+            // Notify all clients about the updated room state
+            await Clients.All.SendAsync("UpdateRooms", Rooms.Values);
+        }
+
     }
 }
