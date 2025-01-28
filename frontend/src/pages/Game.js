@@ -520,10 +520,6 @@ const Game = () => {
             <GameOverOverlay visible={gameOverMessage !== ""}>
                 <GameOverMessageBox>
                     <div>{gameOverMessage}</div>
-                    <div>
-                        {/* Redirects to the default URL */}
-                        <GameOverButton onClick={() => navigate("/")}>Menu</GameOverButton>
-                    </div>
                 </GameOverMessageBox>
             </GameOverOverlay>
             {/* DEBUGGING ONLY */}

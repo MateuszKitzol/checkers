@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "NKYrC9sHRmzPzguCQYfv/oyoiPZ0xfsS9l3ghUew9p8=",
+  "Hash": "UFN+s08AYYDLE7wWjRZfii5Dhc4KhaEH01gtQLe6o7o=",
   "Source": "Checkers",
   "BasePath": "_content/Checkers",
   "Mode": "Default",
@@ -85,12 +85,12 @@
       "OriginalItemSpec": "wwwroot\\manifest.json"
     },
     {
-      "Identity": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\static\\js\\main.185fc483.js",
+      "Identity": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\static\\js\\main.65c69212.js",
       "SourceId": "Checkers",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\",
       "BasePath": "_content/Checkers",
-      "RelativePath": "static/js/main.185fc483.js",
+      "RelativePath": "static/js/main.65c69212.js",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -99,15 +99,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\static\\js\\main.185fc483.js"
+      "OriginalItemSpec": "wwwroot\\static\\js\\main.65c69212.js"
     },
     {
-      "Identity": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\static\\js\\main.185fc483.js.LICENSE.txt",
+      "Identity": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\static\\js\\main.65c69212.js.LICENSE.txt",
       "SourceId": "Checkers",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\",
       "BasePath": "_content/Checkers",
-      "RelativePath": "static/js/main.185fc483.js.LICENSE.txt",
+      "RelativePath": "static/js/main.65c69212.js.LICENSE.txt",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -116,15 +116,15 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\static\\js\\main.185fc483.js.LICENSE.txt"
+      "OriginalItemSpec": "wwwroot\\static\\js\\main.65c69212.js.LICENSE.txt"
     },
     {
-      "Identity": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\static\\js\\main.185fc483.js.map",
+      "Identity": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\static\\js\\main.65c69212.js.map",
       "SourceId": "Checkers",
       "SourceType": "Discovered",
       "ContentRoot": "D:\\Uniwersytet\\ASP.NET\\Projekt\\Checkers\\wwwroot\\",
       "BasePath": "_content/Checkers",
-      "RelativePath": "static/js/main.185fc483.js.map",
+      "RelativePath": "static/js/main.65c69212.js.map",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -133,7 +133,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\static\\js\\main.185fc483.js.map"
+      "OriginalItemSpec": "wwwroot\\static\\js\\main.65c69212.js.map"
     }
   ]
 }
