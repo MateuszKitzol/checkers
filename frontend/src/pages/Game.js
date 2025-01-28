@@ -460,6 +460,36 @@ const Game = () => {
         setGameOverMessage(""); // Clear the game-over message
     };
 
+    //DEBUGGING ONLY
+    const simulateEndGame = (scenario) => {
+        const newBoard = board.map((row) => row.map(() => null)); // Clear the board
+
+        if (scenario === "player1NoCheckers") {
+            // Player 1 has no checkers, Player 2 has some
+            newBoard[6][1] = { player: "P2", isKing: false };
+            newBoard[7][2] = { player: "P2", isKing: false };
+        } else if (scenario === "player2NoCheckers") {
+            // Player 2 has no checkers, Player 1 has some
+            newBoard[1][2] = { player: "P1", isKing: false };
+            newBoard[0][3] = { player: "P1", isKing: false };
+        } else if (scenario === "player1NoMoves") {
+            // Player 1 has checkers but no valid moves
+            newBoard[7][0] = { player: "P1", isKing: false };
+            newBoard[6][1] = { player: "P2", isKing: false };
+        } else if (scenario === "player2NoMoves") {
+            // Player 2 has checkers but no valid moves
+            newBoard[0][1] = { player: "P2", isKing: false };
+            newBoard[1][2] = { player: "P1", isKing: false };
+        }
+
+        console.log("[DEBUG] Simulated Board for scenario:", scenario);
+        console.log(newBoard);
+
+        setBoard(newBoard); // Update the board state
+        checkGameOver(newBoard, "P1"); // Test the game-over logic
+    };
+    //DEBUGGING ONLY
+
     return (
         <GameWrapper>
             <OpponentWrapper>
@@ -485,6 +515,14 @@ const Game = () => {
                     </div>
                 </GameOverMessageBox>
             </GameOverOverlay>
+            {/* DEBUGGING ONLY */}
+            <div>
+                <button onClick={() => simulateEndGame("player1NoCheckers")}>Simulate Player 1 No Checkers</button>
+                <button onClick={() => simulateEndGame("player2NoCheckers")}>Simulate Player 2 No Checkers</button>
+                <button onClick={() => simulateEndGame("player1NoMoves")}>Simulate Player 1 No Moves</button>
+                <button onClick={() => simulateEndGame("player2NoMoves")}>Simulate Player 2 No Moves</button>
+            </div>
+            {/* DEBUGGING ONLY */}
         </GameWrapper>
     );
 };
