@@ -49,8 +49,11 @@ const Nickname = () => {
     const navigate = useNavigate();
 
     const handleConfirm = () => {
+        console.log("handleConfirm")
         if (nickname.trim()) {
+            console.log("handleConfirm2")
             localStorage.setItem("nickname", nickname); // Zapisanie nicku w localStorage
+            console.log("navigating")
             navigate("/rooms"); // Przekierowanie do listy pokoi
         } else {
             alert("Please enter a valid nickname.");

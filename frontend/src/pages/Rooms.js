@@ -1,6 +1,7 @@
-﻿import React, { useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import connection from "../signalr";
 
 const RoomsWrapper = styled.div`
     display: flex;
@@ -20,7 +21,7 @@ const Title = styled.h1`
 const RoomList = styled.ul`
     list-style: none;
     padding: 0;
-    margin: 0 0 30px 0; /* Dodano większy dolny margines */
+    margin: 0 0 30px 0;
     width: 100%;
     max-width: 400px;
 `;
@@ -30,10 +31,10 @@ const RoomItem = styled.li`
     margin: 10px 0;
     background-color: ${(props) =>
         props.status === "free"
-            ? "#28a745" /* Zielony dla wolnych pokoi */
+            ? "#28a745" // Green for free rooms
             : props.status === "waiting"
-                ? "#f1c40f"
-                : "#d9534f"};
+                ? "#f1c40f" // Yellow for waiting rooms
+                : "#d9534f"}; // Red for occupied rooms
     color: white;
     border-radius: 5px;
     text-align: center;
@@ -43,10 +44,10 @@ const RoomItem = styled.li`
     &:hover {
         background-color: ${(props) =>
         props.status === "free"
-            ? "#218838" /* Ciemniejszy zielony dla hover */
+            ? "#218838" // Darker green on hover
             : props.status === "waiting"
-                ? "#d4ac0d"
-                : "#b52b27"};
+                ? "#d4ac0d" // Darker yellow on hover
+                : "#b52b27"}; // Darker red on hover
         color: white;
     }
 
@@ -62,9 +63,8 @@ const RoomItem = styled.li`
     }
 `;
 
-
 const ButtonBase = styled.button`
-    margin-top: 10px; /* Zmniejszona odległość */
+    margin-top: 10px;
     padding: 10px 20px;
     width: 200px;
     text-align: center;
@@ -87,22 +87,53 @@ const ButtonBase = styled.button`
 `;
 
 const NewRoomButton = styled(ButtonBase)``;
-
 const BackButton = styled(ButtonBase)``;
 
 const Rooms = () => {
-    const [rooms, setRooms] = useState([
-        { id: 0, name: "Room 1", status: "free" },
-        { id: 1, name: "Room 2", status: "waiting" },
-        { id: 2, name: "Room 3", status: "occupied" },
-    ]);
-
+    const [rooms, setRooms] = useState([]);
     const navigate = useNavigate();
 
-    const createNewRoom = () => {
-        const newRoomId = rooms.length;
-        const newRoom = { id: newRoomId, name: `Room ${newRoomId + 1}`, status: "free" };
-        setRooms([...rooms, newRoom]);
+    const joinRoom = (roomId) => {
+        const nickname = localStorage.getItem("nickname"); // Retrieve nickname from localStorage
+        if (!nickname) {
+            alert("Nickname not found. Please set your nickname.");
+            return;
+        }
+
+        connection
+            .invoke("JoinRoom", roomId, nickname)
+            .then(() => {
+                console.log(`Joined room: ${roomId}`);
+                navigate(`/game/${roomId}`);
+            })
+            .catch((err) => console.error("Error joining room:", err));
+    };
+
+    useEffect(() => {
+        if (connection) {
+            // Listen for updates to the room list
+            connection.on("UpdateRooms", (updatedRooms) => {
+                console.log("Rooms updated:", updatedRooms);
+                setRooms(updatedRooms);
+            });
+
+            // Fetch the initial list of rooms
+            connection
+                .invoke("GetRooms")
+                .catch((err) => console.error("Error fetching rooms:", err));
+
+            // Cleanup: Remove event listener on unmount
+            return () => {
+                connection.off("UpdateRooms");
+            };
+        }
+    }, []);
+
+    const createRoom = () => {
+        const roomName = `Room ${rooms.length + 1}`;
+        connection
+            .invoke("CreateRoom", roomName)
+            .catch((err) => console.error("Error creating room:", err));
     };
 
     const getFreeRoomCount = () => {
@@ -127,9 +158,17 @@ const Rooms = () => {
             <Title>Available Rooms</Title>
             <RoomList>
                 {rooms.map((room) => (
-                    <RoomItem key={room.id} status={room.status}>
+                    <RoomItem
+                        key={room.id}
+                        status={room.status}
+                        onClick={() => {
+                            if (room.status !== "occupied") {
+                                joinRoom(room.id);
+                            }
+                        }}
+                    >
                         {room.status !== "occupied" ? (
-                            <a href={`/game/${room.id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                            <a href="#">
                                 {room.name} - {getStatusLabel(room.status)}
                             </a>
                         ) : (
@@ -139,7 +178,7 @@ const Rooms = () => {
                 ))}
             </RoomList>
             <NewRoomButton
-                onClick={createNewRoom}
+                onClick={createRoom}
                 disabled={getFreeRoomCount() >= 3}
             >
                 {getFreeRoomCount() >= 3 ? "Limit Reached" : "Create New Room"}
